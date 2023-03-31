@@ -338,15 +338,4 @@ BotCommands = [
 bot.set_my_commands(BotCommands)
 
 
-# @bot.message_handler(content_types=['text'], func=check_whitelist)
-# def print_log(message):
-#     """Выводи логи в консоль"""
-#     print(message.text)
-
-
-# @bot.on_shutdown
-# def shutdown_message(message):
-#     bot.send_message(message.chat.id, 'Бот выключен')
-
-
 bot.polling(none_stop=True)
