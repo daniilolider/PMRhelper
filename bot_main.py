@@ -2,12 +2,11 @@ import telebot
 from telebot import types
 import openai
 import datetime
+import json
 
 from data.commands import commands  # Справочник команд
 from data.schedule_upper_week import upper_schedule_text  # Расписание верхней недели
 from data.schedule_lower_week import lower_schedule_text  # Расписание нижней недели
-from keys.whitelist import whitelist  # Белый список пользователей
-from keys.admin_whitelist import admin_whitelist  # Белый лист администраторов
 
 
 with open("keys/PMRhelper_API", 'r') as TOKEN:
@@ -16,6 +15,14 @@ with open("keys/PMRhelper_API", 'r') as TOKEN:
 
 with open("keys/ChatGPT_API", 'r') as KEY:
     openai.api_key = KEY.read()
+
+
+with open('keys\whitelist.json', 'r') as f:
+    whitelist = json.loads(f.read())
+
+
+with open('keys\whitelist_admin.json', 'r') as f:
+    admin_whitelist = json.loads(f.read())
 
 
 check_whitelist = lambda message: message.chat.id in whitelist
