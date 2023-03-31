@@ -177,38 +177,44 @@ def print_lower_week(message):
 @bot.message_handler(commands=['admin'], func=check_admin)
 def administration(message):
     """Панель администратора"""
-    bot.send_message(message.chat.id, 'Здесь должна быть админская панель')
-
-
-'''    
-    if message.chat.id not in admin_whitelist:
-        bot.send_message(message.chat.id, 'А зачем вам эта команды? :)')
 
     add_whitelist_button = types.KeyboardButton('/add_chatid_to_whitelist')
     remove_whitelist_button = types.KeyboardButton('/remove_chatid_from_whitelist')
     print_whitelist_button = types.KeyboardButton('/print_whitelist')
+    add_adminwhitelist_button = types.KeyboardButton('/add_chatid_to_adminwhitelist')
+    remove_adminwhitelist_button = types.KeyboardButton('/remove_chatid_from_adminwhitelist')
+    print_adminwhitelist_button = types.KeyboardButton('/print_adminwhitelist')
 
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
-    keyboard.add(add_whitelist_button, remove_whitelist_button, print_whitelist_button)
+    keyboard.add(add_whitelist_button, remove_whitelist_button, print_whitelist_button,
+                 add_adminwhitelist_button, remove_adminwhitelist_button, print_adminwhitelist_button)
 
     bot.send_message(message.chat.id, 'Действия:', reply_markup=keyboard)
 
 
 @bot.message_handler(commands=['add_chatid_to_whitelist'], func=check_admin)
 def add_chatid_to_whitelist(message):
-    """Добавляет id чата в белый список"""
+    """Добавляет id чата в whitelist"""
     if message.chat.id in whitelist:
         bot.send_message(message.chat.id, 'id is whitelisted')
     else:
-        whitelist[message.chat.id] = bot.get_chat(message.chat.id).title
+        whitelist.append(message.chat.id)
+
+        with open('keys\whitelist.json', 'w') as f:
+            json.dump(whitelist, f)
+
         bot.send_message(message.chat.id, 'id is added')
 
 
 @bot.message_handler(commands=['remove_chatid_from_whitelist'], func=check_admin)
 def remove_chatid_from_whitelist(message):
-    """Удаляет id чата из белого списка"""
+    """Удаляет id чата из whitelist"""
     if message.chat.id in whitelist:
-        del whitelist[message.chat.id]
+        del whitelist[whitelist.index(message.chat.id)]
+
+        with open('keys\whitelist.json', 'w') as f:
+            json.dump(whitelist, f)
+
         bot.send_message(message.chat.id, 'id is removed')
     else:
         bot.send_message(message.chat.id, "id isn't whitelisted")
@@ -218,7 +224,40 @@ def remove_chatid_from_whitelist(message):
 def print_whitelist(message):
     """Выводит whitelist"""
     bot.send_message(message.chat.id, str(whitelist))
-'''
+
+
+@bot.message_handler(commands=['add_chatid_to_adminwhitelist'], func=check_admin)
+def add_chatid_to_adminwhitelist(message):
+    """Добавляет id чата в adminwhitelist"""
+    if message.chat.id in admin_whitelist:
+        bot.send_message(message.chat.id, 'id is whitelisted')
+    else:
+        admin_whitelist.append(message.chat.id)
+
+        with open('keys\whitelist_admin.json', 'w') as f:
+            json.dump(admin_whitelist, f)
+
+        bot.send_message(message.chat.id, 'id is added')
+
+
+@bot.message_handler(commands=['remove_chatid_from_adminwhitelist'], func=check_admin)
+def remove_chatid_from_adminwhitelist(message):
+    """Удаляет id чата из adminwhitelist"""
+    if message.chat.id in admin_whitelist:
+        del admin_whitelist[admin_whitelist.index(message.chat.id)]
+
+        with open('keys\whitelist_admin.json', 'w') as f:
+            json.dump(admin_whitelist, f)
+
+        bot.send_message(message.chat.id, 'id is removed')
+    else:
+        bot.send_message(message.chat.id, "id isn't whitelisted")
+
+
+@bot.message_handler(commands=['print_adminwhitelist'], func=check_admin)
+def print_adminwhitelist(message):
+    """Выводит adminwhitelist"""
+    bot.send_message(message.chat.id, str(admin_whitelist))
 
 
 @bot.message_handler(content_types=['text'], func=check_whitelist)
