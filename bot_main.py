@@ -9,6 +9,8 @@ from data.schedule_upper_week import upper_schedule_text  # Расписание
 from data.schedule_lower_week import lower_schedule_text  # Расписание нижней недели
 
 
+# region open tokens and lists
+
 with open("keys/PMRhelper_API", 'r') as TOKEN:
     bot = telebot.TeleBot(token=TOKEN.read())
 
@@ -24,16 +26,28 @@ with open('keys\whitelist.json', 'r') as f:
 with open('keys\whitelist_admin.json', 'r') as f:
     admin_whitelist = json.loads(f.read())
 
+# endregion
+
+
+# region util
 
 check_whitelist = lambda message: message.chat.id in whitelist
 check_admin = lambda message: message.chat.id in admin_whitelist
 
+# endregion
+
+
+# region other handlers
 
 @bot.message_handler(commands=['chat_id'])
 def check_id(message):
     """Выводит id чата"""
     bot.send_message(message.chat.id, message.chat.id)
 
+# endregion
+
+
+# region user commands handlers
 
 @bot.message_handler(commands=['start'], func=check_whitelist)
 def starter_bot(message):
@@ -173,6 +187,10 @@ def print_lower_week(message):
     lower_schedule = ''.join(lower_schedule_text.split('split_element'))
     bot.send_message(message.chat.id, lower_schedule)
 
+# endregion
+
+
+# region admin commands handlers
 
 @bot.message_handler(commands=['admin'], func=check_admin)
 def administration(message):
@@ -181,13 +199,12 @@ def administration(message):
     add_whitelist_button = types.KeyboardButton('/add_chatid_to_whitelist')
     remove_whitelist_button = types.KeyboardButton('/remove_chatid_from_whitelist')
     print_whitelist_button = types.KeyboardButton('/print_whitelist')
-    add_adminwhitelist_button = types.KeyboardButton('/add_chatid_to_adminwhitelist')
     remove_adminwhitelist_button = types.KeyboardButton('/remove_chatid_from_adminwhitelist')
     print_adminwhitelist_button = types.KeyboardButton('/print_adminwhitelist')
 
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
     keyboard.add(add_whitelist_button, remove_whitelist_button, print_whitelist_button,
-                 add_adminwhitelist_button, remove_adminwhitelist_button, print_adminwhitelist_button)
+                 remove_adminwhitelist_button, print_adminwhitelist_button)
 
     bot.send_message(message.chat.id, 'Действия:', reply_markup=keyboard)
 
@@ -226,20 +243,6 @@ def print_whitelist(message):
     bot.send_message(message.chat.id, str(whitelist))
 
 
-@bot.message_handler(commands=['add_chatid_to_adminwhitelist'], func=check_admin)
-def add_chatid_to_adminwhitelist(message):
-    """Добавляет id чата в adminwhitelist"""
-    if message.chat.id in admin_whitelist:
-        bot.send_message(message.chat.id, 'id is whitelisted')
-    else:
-        admin_whitelist.append(message.chat.id)
-
-        with open('keys\whitelist_admin.json', 'w') as f:
-            json.dump(admin_whitelist, f)
-
-        bot.send_message(message.chat.id, 'id is added')
-
-
 @bot.message_handler(commands=['remove_chatid_from_adminwhitelist'], func=check_admin)
 def remove_chatid_from_adminwhitelist(message):
     """Удаляет id чата из adminwhitelist"""
@@ -259,6 +262,10 @@ def print_adminwhitelist(message):
     """Выводит adminwhitelist"""
     bot.send_message(message.chat.id, str(admin_whitelist))
 
+# endregion
+
+
+# region user text handlers
 
 @bot.message_handler(content_types=['text'], func=check_whitelist)
 def handler_message(message):
@@ -309,6 +316,10 @@ def handler_message(message):
     else:
         bot.send_message(message.chat.id, 'Неизвестная команда :(')
 
+# endregion
+
+
+# region callbacks
 
 @bot.callback_query_handler(func=lambda call: True)
 def callback_inline(call):
@@ -365,6 +376,10 @@ def callback_inline(call):
     except Exception as e:
         print(repr(e))
 
+# endregion
+
+
+# region botfater's commands
 
 BotCommands = [
     types.BotCommand('start', 'Запуск бота'),
@@ -383,5 +398,6 @@ BotCommands = [
 ]
 bot.set_my_commands(BotCommands)
 
+# endregion
 
 bot.polling(none_stop=True)
