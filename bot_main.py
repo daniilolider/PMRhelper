@@ -271,50 +271,51 @@ def print_adminwhitelist(message):
 def handler_message(message):
     """Обработчик сообщений"""
 
-    if message.text == 'Начало':
+    if message.chat.type == 'private':
+        if message.text == 'Начало':
 
-        keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
+            keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
 
-        schedule_button = types.KeyboardButton('Расписание')
-        help_button = types.KeyboardButton('Что ты можешь?')
-        question_button = types.KeyboardButton('Задать вопрос ChatGPT')
+            schedule_button = types.KeyboardButton('Расписание')
+            help_button = types.KeyboardButton('Что ты можешь?')
+            question_button = types.KeyboardButton('Задать вопрос ChatGPT')
 
-        keyboard.add(schedule_button, question_button, help_button)
+            keyboard.add(schedule_button, question_button, help_button)
 
-        bot.send_message(message.chat.id, 'Приступим к работе', reply_markup=keyboard)
+            bot.send_message(message.chat.id, 'Приступим к работе', reply_markup=keyboard)
 
-    elif message.text == 'Что ты можешь?':
-        bot.send_message(message.chat.id, f'Вот команды, которые я знаю:\n\n{commands}')
+        elif message.text == 'Что ты можешь?':
+            bot.send_message(message.chat.id, f'Вот команды, которые я знаю:\n\n{commands}')
 
-    elif message.text == 'Расписание':
+        elif message.text == 'Расписание':
 
-        keyboard = types.InlineKeyboardMarkup(row_width=2)
+            keyboard = types.InlineKeyboardMarkup(row_width=2)
 
-        monday = types.InlineKeyboardButton('Понедельник', callback_data='monday')
-        tuesday = types.InlineKeyboardButton('Вторник', callback_data='tuesday')
-        wednesday = types.InlineKeyboardButton('Среда', callback_data='wednesday')
-        thursday = types.InlineKeyboardButton('Четверг', callback_data='thursday')
-        friday = types.InlineKeyboardButton('Пятница', callback_data='friday')
-        week = types.InlineKeyboardButton('Вся неделя', callback_data='week')
-        upper_week_button = types.InlineKeyboardButton('Верхняя неделя', callback_data='upper_week')
-        lowe_week_button = types.InlineKeyboardButton('Нижняя неделя', callback_data='lower_week')
-        photo_schedule = types.InlineKeyboardButton('Фотка расписания', callback_data='photo_schedule')
-        week_position = types.InlineKeyboardButton('Какая сейчас неделя?', callback_data='week_position')
+            monday = types.InlineKeyboardButton('Понедельник', callback_data='monday')
+            tuesday = types.InlineKeyboardButton('Вторник', callback_data='tuesday')
+            wednesday = types.InlineKeyboardButton('Среда', callback_data='wednesday')
+            thursday = types.InlineKeyboardButton('Четверг', callback_data='thursday')
+            friday = types.InlineKeyboardButton('Пятница', callback_data='friday')
+            week = types.InlineKeyboardButton('Вся неделя', callback_data='week')
+            upper_week_button = types.InlineKeyboardButton('Верхняя неделя', callback_data='upper_week')
+            lowe_week_button = types.InlineKeyboardButton('Нижняя неделя', callback_data='lower_week')
+            photo_schedule = types.InlineKeyboardButton('Фотка расписания', callback_data='photo_schedule')
+            week_position = types.InlineKeyboardButton('Какая сейчас неделя?', callback_data='week_position')
 
-        keyboard.add(monday, tuesday, wednesday, thursday, friday, week,
-                     upper_week_button, lowe_week_button, photo_schedule, week_position)
+            keyboard.add(monday, tuesday, wednesday, thursday, friday, week,
+                         upper_week_button, lowe_week_button, photo_schedule, week_position)
 
-        bot.send_message(message.chat.id, 'Выберите расписание:', reply_markup=keyboard)
+            bot.send_message(message.chat.id, 'Выберите расписание:', reply_markup=keyboard)
 
-    elif message.text == 'Задать вопрос ChatGPT':
-        bot.send_message(message.chat.id, 'Чтобы написать вопрос ChatGPT напишите "/?" и свой вопрос\n')
+        elif message.text == 'Задать вопрос ChatGPT':
+            bot.send_message(message.chat.id, 'Чтобы написать вопрос ChatGPT напишите "/?" и свой вопрос\n')
 
-    elif message.text[:2] == '??':  # почему-то эта штука работает ток в лс, я хз че делать в группе
-        reply = reply_ChatGPT(message)
-        bot.send_message(message.chat.id, reply, parse_mode='html')
+        elif message.text[:2] == '??':  # почему-то эта штука работает ток в лс, я хз че делать в группе
+            reply = reply_ChatGPT(message)
+            bot.send_message(message.chat.id, reply, parse_mode='html')
 
-    else:
-        bot.send_message(message.chat.id, 'Неизвестная команда :(')
+        else:
+            bot.send_message(message.chat.id, 'Неизвестная команда :(')
 
 # endregion
 
